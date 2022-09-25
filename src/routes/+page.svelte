@@ -1,0 +1,107 @@
+<script>
+    import { goto } from "$app/navigation";
+    import VanillaTilt from "vanilla-tilt";
+    import { onMount } from "svelte";
+
+    onMount(() => {
+        typeof document !== 'undefined'; 
+        const paragraph = document.querySelector(".description");
+        VanillaTilt.init(paragraph)
+    });
+
+
+    function login() {
+        window.location.href='/login';
+    }
+
+    function signup() {
+        window.location.href='/signup';
+    }
+</script>
+
+<!-- Adding a header div to (hopefully) put the login and such-->
+<!-- <nav class="navbar navbar-light" style="background-color: #e3f2fd;">-->
+<nav class="navbar navbar-light" style="background-color: rgba(255, 141, 141, 0.9);">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/"> </a>
+      <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button> -->
+      <div class="d-flex" >
+        <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button> -->
+        <a class="nav-link m-3" href="/login">Login</a>
+        <a class="nav-link m-3" href="/signup">Signup</a>
+      </div>
+    </div>
+  </nav>
+
+
+  
+  <div class="header">
+      <h1>Community Carpool</h1>
+      <div class="description">
+            <p> 
+                Find people in your area to carpool with. Save fuel and the environment!<br>
+                Help your community out by giving a lift to your coworkers without a ride! <br>
+                Please log in or sign up for an account to access our services.
+            </p>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+
+    :global(body) {
+        /* background-color: #e69201; */
+        background: url("https://c4.wallpaperflare.com/wallpaper/542/270/492/abstract-blue-simple-wallpaper-preview.jpg") no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        /* background-size: cover;
+        background-image: url("https://wallpapercave.com/wp/wp2483329.jpg"); https://www.wallpaperflare.com/abstract-blue-simple-backgrounds-triangle-shape-futuristic-wallpaper-wmsn
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 100% 100%; */
+    }
+
+    .header h1 {
+        margin-top: 100px;
+        margin: 6% auto;
+        font-family: "Open Sans", sans-serif;
+        font-weight:bold;
+        background: -webkit-linear-gradient(bottom right,rgb(255, 23, 23), rgb(255, 199, 199));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        /*color: rgb(245, 245, 245);*/
+        font-size: 5rem;
+        text-align: center;
+        /* position: relative; */
+        
+        /* position: absolute; how make in center?? */
+        /* top:70px; */
+    }
+
+    .header p {
+        font-family: "Open Sans", sans-serif;
+        font-size: 24px;
+        color: black;
+    }
+
+    .header {
+        margin-top: 100px; 
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .header .description { 
+        margin-top: 100px;
+        background-color: rgba(256,256,256,0.5);
+        margin: 0 auto;
+        padding: 15px;
+        border-radius: 15px;
+        justify-content: center;
+    }
+    
+</style>
