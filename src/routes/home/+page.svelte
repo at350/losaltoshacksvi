@@ -54,8 +54,6 @@
     onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
         let obj = {...doc.data() };
-
-
         const q2 = query(collection(db, `users/${obj.uid}/info`));
         onSnapshot(q2, (querySnapshot2) => {
           querySnapshot2.forEach((doc2) => {
@@ -66,8 +64,19 @@
             onSnapshot(q3, (querySnapshot3) => {
               querySnapshot3.forEach((doc3) => {
                 let tempObj = { ...doc3.data() };
-                if (tempObj.uid === obj.uid)
-                  obj.trips.push(tempObj);
+                if (tempObj.uid === obj.uid) {
+                  // Check if tempObj is in obj.trips
+                  let found = false;
+                  for (let i = 0; i < obj.trips.length; i++) {
+                    if (obj.trips[i].uid === tempObj.uid && obj.trips[i].location === tempObj.location && obj.trips[i].date === tempObj.date) {
+                      found = true;
+                      break;
+                    }
+                  }
+                  if (!found)
+                    obj.trips.push(tempObj);
+                  console.log(obj.trips)
+                }
                 sortData();
               });
             });
@@ -81,21 +90,27 @@
   function sortData() {
     data.sort((a, b) => (a.distance > b.distance) ? 1 : -1);
     data = data.filter((item) => item.uid !== uid);
-    
     trips = [];
-    console.log(data)
+    // console.log(data)
     // Move all the trips from data into trips
     for (let i = 0; i < data.length; i++) {
-      console.log(data[i].trips)
+      // console.log(data[i].trips)
       for (let j = 0; j < data[i].trips.length; j++) {
-        console.log(data[i].trips.length)
         let obj = { ...data[i].trips[j], index:i };
-        console.log(obj);
-        trips.push(obj);
+        // console.log(obj);
+        let found = false;
+        for (let i = 0; i < trips.length; i++) {
+          if (trips[i].uid === obj.uid && trips[i].location === obj.location && trips[i].date === obj.date) {
+            found = true;
+            break;
+          }
+        }
+        if (!found)
+          trips.push(obj);
       }
     }
 
-    console.log(trips)
+    // console.log(trips)
 
     // console.log("HI")
     // console.log(data)
@@ -122,20 +137,34 @@
       </li>
       */
 
+  let addARide = true;
   function addRide() {
-    // Get where do you go value
-    let where = document.getElementById("where").value;
-    let time = document.getElementById("time").value;
-    addDoc(collection(db, `trips/`), {
-            location: where,
-            time: time,
-            uid: uid
-        }
-    ).then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-        document.getElementById("where").value = '';
-        time = document.getElementById("time").value = '';
-    });
+    if (addARide) {
+      addARide = false;
+      const submitButton = document.querySelector("button");
+      const locationInput = document.querySelector("#where");
+      const timeInput = document.querySelector("#time");
+      submitButton.setAttribute("disabled", "");
+      locationInput.setAttribute("disabled", "");
+      timeInput.setAttribute("disabled", "");
+      // Get where do you go value
+      let where = document.getElementById("where").value;
+      let time = document.getElementById("time").value;
+      addDoc(collection(db, `trips/`), {
+              location: where,
+              time: time,
+              uid: uid
+          }
+      ).then((docRef) => {
+          console.log("Document written with ID: ", docRef.id);
+          document.getElementById("where").value = '';
+          time = document.getElementById("time").value = '';
+          submitButton.removeAttribute("disabled")
+          locationInput.removeAttribute("disabled")
+          timeInput.removeAttribute("disabled")
+          addARide = true;
+      });
+    }
   }
 </script>
 
@@ -145,10 +174,14 @@
   <div class="container-fluid">
     <h1 class="navbar-header">Find A Carpool</h1>
     <ul class="nav navbar-nav">
-      <button class="btn btn-danger navbar-btn" style="background-color:blue; border:blue" on:click={signOut}>Sign Out</button>
+      <button class="btn btn-danger navbar-btn" style="background-color:#122861; border:#122681" on:click={signOut}>Sign Out</button>
     </ul>
   </div>
 </nav>
+<div class="image">
+  <img src="https://media.discordapp.net/attachments/1016541378962014240/1023569981323100220/unknown.png" alt="">
+
+</div>
 
 <div class="grid-container">
     <!--<h1 class="font-weight-bold" style="color:#122861; font-size:40px;"><pre><br> DASHBOARD</pre></h1>-->
@@ -212,11 +245,15 @@
 
       <div class="charts">
 
-        <div class="charts-card">
+        <div class="charts-card" id="addRideForm">
           <p class="chart-title">Add a Ride</p>
-          <form on:submit|preventDefault={addRide}>
-            <input type="text" id="where" placeholder="Where do you go?">
-            <input type="time" id="time" placeholder="Departure Time">
+          <form on:submit|preventDefault={addRide} class="row g-3">
+            <div class="col-12">
+              <input type="text" id="where" class="form-control" placeholder="Where do you go?" required>
+            </div>
+            <div class="col-12">
+              <input type="time" id="time" class="form-control" placeholder="Departure Time" required>
+            </div>
             
             <!-- <p>Are you someone driving or are you a person looking for a carpool?</p>
             <input type="radio" id="driving" name="a" value="0">
@@ -224,17 +261,17 @@
             <input type="radio" id="carpool" name="a" value="1">
             <label for="carpool">I am looking for a carpool</label><br> -->
             
-            <button type="submit" class="haha" style="margin:10px, padding:5px">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </form>
           
           <div id="bar-chart"></div>
         </div>
 
-        <div class="charts-card">
+        <div class="charts-card" id="potentialCarpoolers">
           <p class="chart-title">Potential Carpoolers</p> 
           <table class="contentTable">
             <tr>
-              <th>Distance</th>
+              <th>Distance (mi)</th>
               <th>Name</th>
               <th>Departure Time</th>
               <th>Destination</th>
@@ -242,10 +279,10 @@
             {#each trips as {location, time, index}}
               {#if location}
               <tr>
-                <td>{data[index].distance.toFixed(2)}</td>
-                <td><a href={`mailto:${data[index].email}`}>{data[index].firstName}</a></td>
-                <td>{time}</td>
-                <td>{location}</td>
+                <td align="center">{data[index].distance.toFixed(2)}</td>
+                <td align="center"><a href={`mailto:${data[index].email}`}>{data[index].firstName}</a></td>
+                <td align="center">{time}</td>
+                <td align="center">{location}</td>
               </tr>
               {/if}
             {/each}
@@ -258,12 +295,14 @@
   </div>
 
 <style>
-
-  table .contentTable {
-    border:black;
-    padding: 5px;;
+  :global(body) {
+    background:-webkit-linear-gradient(right, #112d5f, #534ec4, #3885e5);
   }
-  .contentTable th{b}
+  tr th{
+    border: 1px solid blue;
+    padding: 10px;
+    text-align: center;
+  }
 
   input:hover{
     background-color:#d8d7ed;
@@ -272,7 +311,20 @@
     background-color:#d8d7ed;
   }
 
-  .grid-container{background:-webkit-linear-gradient(right, #112d5f, #534ec4, #3885e5);}
+  .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem;
+  }
+
+  .grid-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+  }
   nav {
     background-color: blue;
   }
@@ -285,9 +337,6 @@
     -webkit-text-fill-color: transparent;
 
 
-  }
-  input{
-    margin: 5px;
   }
    body {
   margin: 0;
@@ -323,10 +372,6 @@
   color: #f5b74f;
 }*/
 
-.font-weight-bold {
-  font-weight: 600;
-}
-
 .grid-container {
   display: grid;
   grid-template-columns: auto auto auto;
@@ -353,57 +398,7 @@
   display: none;
 }
 p{
-  color: red;
-}
-
-/* ---------- SIDEBAR ---------- */
-
-#sidebar {
-  grid-area: sidebar;
-  height: 100%;
-  background-color: #21232d;
-  color: #9799ab;
-  overflow-y: auto;
-  transition: all 0.5s;
-  -webkit-transition: all 0.5s;
-}
-
-.sidebar-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 20px 20px 20px;
-  margin-bottom: 30px;
-}
-
-.sidebar-title > span {
-  display: none;
-}
-
-.sidebar-brand {
-  margin-top: 15px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.sidebar-list {
-  padding: 0;
-  margin-top: 15px;
-  list-style-type: none;
-}
-
-.sidebar-list-item {
-  padding: 20px 20px 20px 20px;
-}
-
-.sidebar-list-item:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-}
-
-.sidebar-responsive {
-  display: inline !important;
-  position: absolute;
+  color: #112d5f;
 }
 
 /* ---------- MAIN ---------- */
@@ -412,15 +407,6 @@ p{
   grid-area: main;
   overflow-y: auto;
   padding: 20px 20px;
-}
-
-.main-title {
-  display: flex;
-  justify-content: space-between;
-}
-
-.main-title > p {
-  font-size: 20px;
 }
 
 /*.main-cards {
@@ -493,6 +479,14 @@ p{
   border-radius: 5px;
   box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
 }
+
+/* #addRideForm {
+  width: 80%;
+}
+
+#potentialCarpoolers {
+  width: 120%;
+} */
 
 .chart-title {
   display: flex;

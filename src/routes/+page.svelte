@@ -2,6 +2,7 @@
     import { goto } from "$app/navigation";
     import VanillaTilt from "vanilla-tilt";
     import { onMount } from "svelte";
+    import { getAuth, onAuthStateChanged } from "firebase/auth";
 
     onMount(() => {
         typeof document !== 'undefined'; 
@@ -11,11 +12,19 @@
 
 
     function login() {
-        window.location.href='/login';
+        checkLoggedIn('/login');
     }
 
     function signup() {
-        window.location.href='/signup';
+        checkLoggedIn('/signup');
+    }
+
+    function checkLoggedIn(inputPath) {
+        let uid = localStorage.getItem("uid");
+        if (uid)
+            window.location.href = '/home'
+        else
+            window.location.href = inputPath;
     }
 </script>
 
@@ -30,8 +39,8 @@
       <div class="d-flex" >
         <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button> -->
-        <a class="nav-link m-3" href="/login">Login</a>
-        <a class="nav-link m-3" href="/signup">Signup</a>
+        <button class="nav-link m-3 textButtons" on:click={login}>Login</button>
+        <button class="nav-link m-3 textButtons" on:click={signup}>Signup</button>
       </div>
     </div>
   </nav>
@@ -39,7 +48,7 @@
 
   
   <div class="header">
-      <h1>Community Carpool</h1>
+      <h1>Communicar</h1>
       <div class="description">
             <p> 
                 Find people in your area to carpool with. Save fuel and the environment!<br>
@@ -82,6 +91,14 @@
         /* top:70px; */
     }
 
+    .textButtons {
+        border: none;
+        background-color: inherit;
+        font-size: 16px;
+        cursor: pointer;
+        display: inline-block;
+    }
+    
     .header p {
         font-family: "Open Sans", sans-serif;
         font-size: 24px;
