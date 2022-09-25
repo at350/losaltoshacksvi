@@ -1,6 +1,5 @@
 <script>
     import App from "../../routes/fb";
-    import { goto } from "$app/navigation";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
     import { addDoc, collection, getFirestore } from "firebase/firestore";
     import axios from "axios";

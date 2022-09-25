@@ -15,14 +15,9 @@
     typeof localStorage !== 'undefined';
     uid = localStorage.getItem("uid") || auth.currentUser.uid;
     console.log(uid);
-    // typeof localStorage !== 'undefined';
     readLongLat();
     readData();
-    // sortData();
-    // console.log(data)
-    // Remove any items in data that have the same uid as the current user
-    // uid =  auth.currentUser.uid;
-    // loop through data
+    
   })
 
   function signOut() {
@@ -34,8 +29,6 @@
   }
 
   function readLongLat() {
-    // uid = auth.currentUser.uid || localStorage.getItem("uid");
-    // console.log(uid);
     const q = query(collection(db, `users/${uid}/info`));
     onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
@@ -91,13 +84,9 @@
     data.sort((a, b) => (a.distance > b.distance) ? 1 : -1);
     data = data.filter((item) => item.uid !== uid);
     trips = [];
-    // console.log(data)
-    // Move all the trips from data into trips
     for (let i = 0; i < data.length; i++) {
-      // console.log(data[i].trips)
       for (let j = 0; j < data[i].trips.length; j++) {
         let obj = { ...data[i].trips[j], index:i };
-        // console.log(obj);
         let found = false;
         for (let i = 0; i < trips.length; i++) {
           if (trips[i].uid === obj.uid && trips[i].location === obj.location && trips[i].date === obj.date) {
@@ -110,10 +99,6 @@
       }
     }
 
-    // console.log(trips)
-
-    // console.log("HI")
-    // console.log(data)
   }
 
   // Functions that finds the distance in miles between two latitude and longitude coordinates
@@ -126,16 +111,7 @@
 
     return 7918 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
   }
-  /*
-  <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="Youtube.com">Help
-        <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="Youtube.com">Help</a></li>
-          <li><a href="Youtube.com">Help2</a></li>
-        </ul>
-      </li>
-      */
+  
 
   let addARide = true;
   function addRide() {
@@ -184,64 +160,7 @@
 </div>
 
 <div class="grid-container">
-    <!--<h1 class="font-weight-bold" style="color:#122861; font-size:40px;"><pre><br> DASHBOARD</pre></h1>-->
-
-      <!-- Weird stuff ahhhhh -->
-      <!-- <py-script output="mpl">
-          from helper import *
-          import tkinter as tk
-          import matplotlib.pyplot as plt
-          import numpy as np
-          from matplotlib import colors
-          from matplotlib.ticker import PercentFormatter
-          import matplotlib.mlab as mlab
-
-
-          distances = [23.4, 0.45, 34, 0.45, 0.78, 4.5345, 6.32333, 2.0, 3] 
-
-          num_bins = 5
-          n, bins, patches = plt.hist(distances, num_bins, facecolor='blue', alpha=0.5)
-          plt.xlabel('Distance from you (miles)')
-          plt.ylabel('Number of Potential Carpoolers')
-          plt.title(r'Carpoolers Near You')
-          plt.savefig('carpoolers.png', bbox_inches='tight', transparent = True)
-          plt.show()
-      </py-script>   -->
-      <!-- <div class="main-cards">
-
-       <div class="card" onclick="location.href='/home?/requestRides'">  This was meant to be clickable and it'd take you to a new page but we kinda scrapped that idea
-          <div class="card-inner">
-            <p class="text-primary">Request a Ride</p>
-            <span class="material-icons-outlined text-blue">inventory_2</span>
-          </div>
-          <span class="text-primary font-weight-bold">(This is where ride requests occur)</span>
-        </div>
-
-        <div class="card">
-          <div class="card-inner">
-            <p class="text-primary">Offer a Ride</p>
-            <span class="material-icons-outlined text-orange">add_shopping_cart</span>
-          </div>
-          <span class="text-primary font-weight-bold">(This is where you pick people up)</span>
-        </div>
-
-        <div class="card">
-          <div class="card-inner">
-            <p class="text-primary">Update Info</p>
-            <span class="material-icons-outlined text-green">shopping_cart</span>
-          </div>
-          <span class="text-primary font-weight-bold">(Update address and pickup time)</span>
-        </div>
-
-        <div class="card">
-          <div class="card-inner">
-            <p class="text-primary">Ride History</p>
-            <span class="material-icons-outlined text-red">notification_important</span>
-          </div>
-          <span class="text-primary font-weight-bold">(For the aesthetic, not to be implemented)</span>
-        </div>
-
-      </div> -->
+    
 
       <div class="charts">
 
@@ -255,11 +174,6 @@
               <input type="time" id="time" class="form-control" placeholder="Departure Time" required>
             </div>
             
-            <!-- <p>Are you someone driving or are you a person looking for a carpool?</p>
-            <input type="radio" id="driving" name="a" value="0">
-            <label for="driving">I am driving</label><br>
-            <input type="radio" id="carpool" name="a" value="1">
-            <label for="carpool">I am looking for a carpool</label><br> -->
             
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
@@ -298,6 +212,7 @@
   :global(body) {
     background:-webkit-linear-gradient(right, #112d5f, #534ec4, #3885e5);
   }
+  
   tr th{
     border: 1px solid blue;
     padding: 10px;
@@ -305,9 +220,6 @@
   }
 
   input:hover{
-    background-color:#d8d7ed;
-  }
-  .haha:hover{
     background-color:#d8d7ed;
   }
 
@@ -338,39 +250,6 @@
 
 
   }
-   body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  background-color: #e6e8ed;
-  color: #666666;
-  font-family: "Montserrat", sans-serif;
-}
-
-.material-icons-outlined {
-  vertical-align: middle;
-  line-height: 1px;
-}
-
-/*.text-primary {
-  color: #666666;
-}
-
-.text-blue {
-  color: #246dec;
-}
-
-.text-red {
-  color: #cc3c43;
-}
-
-.text-green {
-  color: #367952;
-}
-
-.text-orange {
-  color: #f5b74f;
-}*/
 
 .grid-container {
   display: grid;
@@ -380,89 +259,10 @@
   height: 100vh;
 }
 
-
-/* ---------- HEADER ---------- */
-
-.header {
-  grid-area: header;
-  height: 200px;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 30px 0 30px;
-  box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
-}
-
-.menu-icon {
-  display: none;
-}
 p{
   color: #112d5f;
 }
 
-/* ---------- MAIN ---------- */
-
-.main-container {
-  grid-area: main;
-  overflow-y: auto;
-  padding: 20px 20px;
-}
-
-/*.main-cards {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  gap: 20px;
-  margin: 20px 0;
-}
-
-.card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  padding: 25px;
-  background-color: #ffffff;
-  box-sizing: border-box;
-  border: 1px solid #d2d2d3;
-  border-radius: 5px;
-  box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
-}
-
-.card:first-child {
-  border-left: 7px solid #246dec;
-}
-
-.card:nth-child(2) {
-  border-left: 7px solid #f5b74f;
-}
-
-.card:nth-child(3) {
-  border-left: 7px solid #367952;
-}
-
-.card:nth-child(4) {
-  border-left: 7px solid #cc3c43;
-}
-
-.card > span {
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.card-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-inner > p {
-  font-size: 18px;
-}
-
-.card-inner > span {
-  font-size: 35px;
-}
-*/
 .charts {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -480,14 +280,6 @@ p{
   box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
 }
 
-/* #addRideForm {
-  width: 80%;
-}
-
-#potentialCarpoolers {
-  width: 120%;
-} */
-
 .chart-title {
   display: flex;
   align-items: center;
@@ -495,9 +287,6 @@ p{
   font-size: 22px;
   font-weight: 600;
 }
-
-
-/* ---------- SCROLLBARS ---------- */
 
 ::-webkit-scrollbar {
   width: 5px;
@@ -518,45 +307,10 @@ p{
   background-color: #a5aaad;
 }
 
-
-/* ---------- MEDIA QUERIES ---------- */
-
-
-/* Medium <= 992px */
-@media screen and (max-width: 992px) {
-  
-
-  #sidebar {
-    display: none;
-  }
-
-  .menu-icon {
-    display: inline;
-  }
-
-  .sidebar-title > span {
-    display: inline;
-  }
-}
-
-/* Small <= 768px */
 @media screen and (max-width: 768px) {
-  .main-cards {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin-bottom: 0;
-  }
-
   .charts {
     grid-template-columns: 1fr;
     margin-top: 30px;
-  }
-}
-
-/* Extra Small <= 576px */
-@media screen and (max-width: 576px) {
-  .header-left {
-    display: none;
   }
 }
 </style>
